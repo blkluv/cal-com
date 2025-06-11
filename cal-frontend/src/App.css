@@ -1,19 +1,66 @@
-/* Container & Typography */
+:root {
+  --primary: #da291c; /* Falcons/Atlanta United red */
+  --black: #000000;
+  --white: #ffffff;
+  --gray: #f4f4f4;
+  --text-dark: #1a1a1a;
+  --text-light: #fefefe;
+  --highlight: #8c8c8c;
+  font-family: "Inter", "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+body {
+  background-color: var(--white);
+  color: var(--text-dark);
+  margin: 0;
+  padding: 3rem 0 0;
+  font-size: 16px;
+  font-family: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
 .container {
-  max-width: 1200px;
+  max-width: 800px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
-  font-family: 'Arial', sans-serif;
+  padding: 1rem;
+  background: #fffafc;
+  border-radius: 16px;
+  font-family: 'Comic Neue', cursive;
 }
 
-h1, h2 {
+/* Headings */
+h1 {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: var(--primary);
   text-align: center;
-  color: #333;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.5px;
 }
 
+h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-top: 2rem;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--highlight);
+  margin-top: 1rem;
+}
+
+/* Branding */
 .brand-title {
-  font-size: 2rem;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,24 +68,24 @@ h1, h2 {
 }
 
 .cal-badge {
-  background: #ff5ec4;
+  background: #ff6ec7;
   color: white;
-  padding: 0.25em 0.5em;
-  font-size: 0.75rem;
-  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
   vertical-align: middle;
 }
 
-/* Cards & Forms */
+/* Cards */
 .card {
-  background: white;
-  border: 1px solid #eee;
-  border-radius: 12px;
+  background: #fef2f4;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  margin-bottom: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(255, 110, 199, 0.2);
+  margin: 1rem 0;
 }
 
+/* Forms */
 .user-input-form input,
 .booking-form input {
   width: 100%;
@@ -49,6 +96,21 @@ h1, h2 {
   font-size: 1rem;
 }
 
+input,
+button {
+  padding: 0.8rem 1rem;
+  margin-top: 0.8rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 2px solid var(--gray);
+  font-family: inherit;
+}
+
+input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
 /* Buttons */
 button,
 input[type="submit"] {
@@ -56,14 +118,23 @@ input[type="submit"] {
   cursor: pointer;
   transition: all 0.3s ease;
   border-radius: 6px;
+  width: 100%;
 }
 
 .btn-primary {
-  background: #007bff;
+  background: #000;
   color: white;
-  padding: 12px;
+  padding: 0.75rem 1.25rem;
   border: none;
-  width: 100%;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #ff6ec7;
 }
 
 .btn-primary:disabled {
@@ -72,21 +143,23 @@ input[type="submit"] {
 }
 
 .btn-secondary {
-  background: #6c757d;
-  color: white;
-  padding: 12px;
-  border: none;
-  width: 100%;
+  background: transparent;
+  border: 2px solid #ff6ec7;
+  color: #ff6ec7;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 .btn-secondary:hover {
   background: #5a6268;
+  color: white;
 }
 
 /* Duration Selector */
 .duration-selector {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-top: 1.5rem;
 }
 
 .pill-row {
@@ -97,22 +170,23 @@ input[type="submit"] {
 }
 
 .pill-btn {
-  padding: 10px 20px;
-  border: 1px solid #ddd;
-  background: white;
-  border-radius: 20px;
-  transition: 0.3s;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background: #eee;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .pill-btn.active {
-  background: #007bff;
+  background: #ff6ec7;
   color: white;
-  border-color: #0056b3;
 }
 
 /* Time Slots */
 .slots-container {
-  margin-bottom: 2rem;
+  margin-top: 1.5rem;
 }
 
 .day-slots h3 {
@@ -123,25 +197,27 @@ input[type="submit"] {
 .time-slots {
   display: flex;
   flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
   justify-content: center;
-  gap: 10px;
 }
 
 .time-pill {
-  padding: 8px 16px;
-  background: #f8f9fa;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  transition: background 0.3s;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background: #eee;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .time-pill.active {
-  background: #28a745;
+  background: #ff6ec7;
   color: white;
-  border-color: #1e7e34;
 }
 
-/* Confirmation Modal */
+/* Modal */
 .booking-confirmation {
   position: fixed;
   top: 50%;
@@ -169,11 +245,23 @@ input[type="submit"] {
 }
 
 .booking-details a {
-  color: #007bff;
+  color: var(--primary);
   text-decoration: none;
   word-break: break-word;
+  font-weight: 600;
 }
 
 .booking-details a:hover {
   text-decoration: underline;
+}
+
+/* Dismiss Button */
+.dismiss-button {
+  margin-top: 1rem;
+  background-color: var(--black);
+  color: var(--white);
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  cursor: pointer;
 }
