@@ -1,118 +1,147 @@
+/* Container & Typography */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  font-family: 'Arial', sans-serif;
 }
 
-h1,
-h2 {
+h1, h2 {
   text-align: center;
   color: #333;
+  margin-bottom: 1rem;
 }
 
-.user-input-form {
-  max-width: 400px;
-  margin: 0 auto 30px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+.brand-title {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.user-input-form input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.cal-badge {
+  background: #ff5ec4;
+  color: white;
+  padding: 0.25em 0.5em;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  vertical-align: middle;
 }
 
-.user-input-form button,
-.duration-selector button,
-.time-slots button,
-.booking-form button {
-  padding: 10px 20px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+/* Cards & Forms */
+.card {
   background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+.user-input-form input,
+.booking-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+/* Buttons */
+button,
+input[type="submit"] {
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  border-radius: 6px;
 }
 
-.user-input-form button {
-  width: 100%;
+.btn-primary {
   background: #007bff;
   color: white;
+  padding: 12px;
   border: none;
+  width: 100%;
 }
 
-.user-input-form button:disabled {
+.btn-primary:disabled {
   background: #cccccc;
   cursor: not-allowed;
 }
 
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+  padding: 12px;
+  border: none;
+  width: 100%;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+}
+
+/* Duration Selector */
 .duration-selector {
-  margin-bottom: 30px;
   text-align: center;
+  margin-bottom: 2rem;
 }
 
-.duration-selector button {
-  margin: 0 10px;
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 
-button.active {
+.pill-btn {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 20px;
+  transition: 0.3s;
+}
+
+.pill-btn.active {
   background: #007bff;
   color: white;
   border-color: #0056b3;
 }
 
+/* Time Slots */
 .slots-container {
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
 }
 
-.day-slots {
-  margin-bottom: 20px;
+.day-slots h3 {
+  text-align: center;
+  margin-bottom: 0.5rem;
 }
 
 .time-slots {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
   justify-content: center;
+  gap: 10px;
 }
 
-.booking-form {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+.time-pill {
+  padding: 8px 16px;
+  background: #f8f9fa;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  transition: background 0.3s;
 }
 
-.booking-form input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.booking-form button {
-  width: 100%;
+.time-pill.active {
   background: #28a745;
   color: white;
-  border: none;
+  border-color: #1e7e34;
 }
 
-.booking-form button:hover:not(:disabled) {
-  background: #218838;
-}
-
-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
+/* Confirmation Modal */
 .booking-confirmation {
   position: fixed;
   top: 50%;
@@ -120,49 +149,31 @@ button:disabled {
   transform: translate(-50%, -50%);
   background: white;
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   max-width: 500px;
   width: 90%;
   z-index: 1000;
+  text-align: center;
 }
 
 .booking-confirmation h2 {
   color: #28a745;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.booking-details {
   margin-bottom: 1.5rem;
 }
 
 .booking-details p {
   margin: 0.5rem 0;
   line-height: 1.5;
+  font-size: 0.95rem;
 }
 
 .booking-details a {
   color: #007bff;
   text-decoration: none;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .booking-details a:hover {
   text-decoration: underline;
-}
-
-.dismiss-button {
-  width: 100%;
-  padding: 0.75rem;
-  background: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 1rem;
-}
-
-.dismiss-button:hover {
-  background: #5a6268;
 }
