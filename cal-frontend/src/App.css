@@ -5,7 +5,7 @@
   --gray: #f4f4f4;
   --text-dark: #1a1a1a;
   --text-light: #fefefe;
-  --highlight: #8c8c8c;
+  --highlight: #ff6ec7; /* Adjusted highlight to pink/magenta for fun vibe */
   font-family: "Inter", "Segoe UI", "Helvetica Neue", sans-serif;
 }
 
@@ -19,6 +19,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  min-height: 100vh; /* Ensure body takes full viewport height */
 }
 
 .container {
@@ -26,9 +27,10 @@ body {
   width: 100%;
   margin: 0 auto;
   padding: 1rem;
-  background: #fffafc;
+  background: #fffafc; /* Light pinkish background */
   border-radius: 16px;
   font-family: 'Comic Neue', cursive;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Soft shadow for the container */
 }
 
 /* Headings */
@@ -65,11 +67,12 @@ h3 {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  color: var(--black); /* Ensure brand title is black for contrast */
 }
 
 .cal-badge {
-  background: #ff6ec7;
-  color: white;
+  background: var(--highlight); /* Use highlight color */
+  color: var(--white);
   padding: 0.2rem 0.5rem;
   border-radius: 8px;
   font-size: 1rem;
@@ -78,51 +81,65 @@ h3 {
 
 /* Cards */
 .card {
-  background: #fef2f4;
+  background: #fef2f4; /* Light pinkish card background */
   padding: 1.5rem;
   border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(255, 110, 199, 0.2);
+  box-shadow: 0 2px 12px rgba(255, 110, 199, 0.2); /* Pinkish shadow */
   margin: 1rem 0;
 }
 
 /* Forms */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+.pwyc-offer-form input,
 .user-input-form input,
 .booking-form input {
   width: 100%;
   padding: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 12px; /* Reduced margin-bottom slightly if form-group is used */
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 1rem;
+  box-sizing: border-box; /* Include padding in width */
 }
 
-input,
-button {
-  padding: 0.8rem 1rem;
-  margin-top: 0.8rem;
-  font-size: 1rem;
-  border-radius: 10px;
-  border: 2px solid var(--gray);
-  font-family: inherit;
+input[type="date"] {
+  height: 40px; /* Ensure consistent height for date inputs */
 }
 
 input:focus {
   border-color: var(--primary);
   outline: none;
+  box-shadow: 0 0 0 2px rgba(218, 41, 28, 0.2); /* Soft red focus shadow */
 }
 
 /* Buttons */
 button,
 input[type="submit"] {
+  padding: 0.8rem 1rem;
+  margin-top: 0.8rem; /* Keep existing margin-top for standalone buttons */
   font-size: 1rem;
+  border-radius: 10px;
+  border: 2px solid var(--gray);
+  font-family: inherit;
   cursor: pointer;
   transition: all 0.3s ease;
-  border-radius: 6px;
-  width: 100%;
+  width: 100%; /* Make buttons full width in their container */
+  box-sizing: border-box;
 }
 
 .btn-primary {
-  background: #000;
+  background: var(--black);
   color: white;
   padding: 0.75rem 1.25rem;
   border: none;
@@ -131,29 +148,32 @@ input[type="submit"] {
   margin-top: 1rem;
   font-weight: bold;
   transition: background 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for primary button */
 }
 
 .btn-primary:hover {
-  background: #ff6ec7;
+  background: var(--highlight); /* Pink/magenta hover */
 }
 
 .btn-primary:disabled {
   background: #cccccc;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .btn-secondary {
   background: transparent;
-  border: 2px solid #ff6ec7;
-  color: #ff6ec7;
+  border: 2px solid var(--highlight); /* Pink/magenta border */
+  color: var(--highlight);
   padding: 0.5rem 1rem;
   border-radius: 8px;
   cursor: pointer;
+  margin-top: 0.75rem; /* Adjust margin to be consistent */
 }
 
 .btn-secondary:hover {
-  background: #5a6268;
-  color: white;
+  background: var(--highlight);
+  color: var(--white);
 }
 
 /* Duration Selector */
@@ -172,7 +192,7 @@ input[type="submit"] {
 .pill-btn {
   padding: 0.5rem 1rem;
   border-radius: 999px;
-  background: #eee;
+  background: var(--gray);
   border: none;
   cursor: pointer;
   font-weight: 600;
@@ -180,7 +200,7 @@ input[type="submit"] {
 }
 
 .pill-btn.active {
-  background: #ff6ec7;
+  background: var(--highlight);
   color: white;
 }
 
@@ -205,7 +225,7 @@ input[type="submit"] {
 .time-pill {
   padding: 0.5rem 1rem;
   border-radius: 999px;
-  background: #eee;
+  background: var(--gray);
   border: none;
   cursor: pointer;
   font-weight: 600;
@@ -213,29 +233,102 @@ input[type="submit"] {
 }
 
 .time-pill.active {
-  background: #ff6ec7;
+  background: var(--highlight);
   color: white;
 }
 
-/* Modal */
-.booking-confirmation {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  max-width: 500px;
-  width: 90%;
-  z-index: 1000;
+/* PWYC Specific Styles */
+.timeframe-advisory {
+    font-size: 0.9em;
+    color: var(--primary);
+    background-color: #ffe0e0;
+    border-left: 4px solid var(--primary);
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.timeframe-advisory span {
+    font-size: 1.1em;
+    margin-right: 5px;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--black);
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+
+/* Message Display (new) */
+.message-display {
+  padding: 10px 15px;
+  margin: 1rem 0;
+  border-radius: 8px;
+  font-weight: 600;
   text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.message-display.info {
+  background-color: #e0f7fa;
+  color: #00796b;
+  border: 1px solid #00796b;
+}
+
+.message-display.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #2e7d32;
+}
+
+.message-display.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #c62828;
+}
+
+/* Booking Confirmation */
+.booking-confirmation {
+  /* Using card styles directly for a consistent look */
+  background: #fef2f4; /* Light pinkish card background */
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(255, 110, 199, 0.2);
+  margin: 1rem auto; /* Center the confirmation card */
+  max-width: 500px; /* Keep max width for readability */
+  text-align: center; /* Center content inside */
 }
 
 .booking-confirmation h2 {
-  color: #28a745;
+  color: var(--black); /* Keep headings black for consistency */
   margin-bottom: 1.5rem;
+}
+.booking-confirmation .confirmation-message,
+.booking-confirmation .confirmation-action {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: var(--text-dark);
+}
+
+.booking-confirmation .tiktok-link,
+.booking-confirmation .irl-link {
+  color: var(--highlight); /* Use highlight color for links */
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.booking-confirmation .tiktok-link:hover,
+.booking-confirmation .irl-link:hover {
+  text-decoration: underline;
+  color: var(--primary); /* Red hover */
 }
 
 .booking-details p {
@@ -255,13 +348,33 @@ input[type="submit"] {
   text-decoration: underline;
 }
 
-/* Dismiss Button */
-.dismiss-button {
-  margin-top: 1rem;
-  background-color: var(--black);
-  color: var(--white);
-  border: none;
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  cursor: pointer;
+.booking-confirmation .btn-primary {
+    margin-top: 1.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  .container {
+    padding: 0.5rem;
+    margin: 0 0.5rem; /* Reduce side margin on very small screens */
+  }
+  h1 {
+    font-size: 2rem;
+  }
+  h2 {
+    font-size: 1.2rem;
+  }
+  .card {
+    padding: 1rem;
+  }
+  .pill-row, .time-slots {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pill-btn, .time-pill, .btn-primary, .btn-secondary {
+    width: 100%;
+  }
+  .form-group label, .form-group input {
+    font-size: 0.9rem;
+  }
 }
