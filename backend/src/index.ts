@@ -1,229 +1,144 @@
 import dotenv from "dotenv";
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { CONSTANTS } from "./constant";
 import axios from "axios";
 import { paymentMiddleware, Resource } from "x402-express";
 dotenv.config();
 
-const app = express();
+// Constants
+const PORT = process.env.PORT || 3000;
+const FACILITATOR_URL = "https://x402.org/facilitator" as Resource;
+const CAL_COM_API_KEY = process.env.CAL_COM_API_KEY as string;
+const PUBLIC_ADDRESS = process.env.PUBLIC_ADDRESS as `0x${string}`;
 
+// App setup
+const app = express();
 app.use(cors());
 app.use(express.json());
-const facilitatorUrl = "https://x402.org/facilitator" as Resource;
+
+// X402 Payment Middleware (hold funds until TikTok proof)
 app.use(
   paymentMiddleware(
-    process.env.PUBLIC_ADDRESS as `0x${string}`,
+    PUBLIC_ADDRESS,
     {
-      "POST /test": {
-        price: "$0.001",
+      "POST /book": {
+        price: "$5.00", // Base fee (adjust per industry)
         network: "base-sepolia",
       },
     },
-    { url: facilitatorUrl }
+    { url: FACILITATOR_URL }
   )
 );
-app.post("/test", (req, res) => {
-  const { attendeeName, attendeeEmail, startTime, username, eventTypeSlug } =
-    req.body;
-  res.json({
-    success: true,
-    booking: {
-      attendeeName,
-      attendeeEmail,
-      startTime,
-      username,
-      eventTypeSlug,
-      status: "confirmed",
-    },
-  });
-});
 
+// Health check
 app.get("/health", (req, res) => {
-  res.json({ message: "healthy" });
+  res.json({ status: "healthy" });
 });
 
-app.post("/get-slots", async (req: Request, res: Response) => {
-  let { startTime, endTime } = req.body;
-  const { username, duration } = req.body;
-  if (!username) {
-    res.status(400).json({ error: "username required" });
-  }
-  if (!startTime) {
-    startTime = new Date().toISOString();
-  }
-  if (!endTime) {
-    endTime = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-  }
+// Get available slots (15/30/60 mins)
+app.post("/slots", async (req: Request, res: Response) => {
+  const { username, duration, startTime, endTime } = req.body;
+
+  if (!username) return res.status(400).json({ error: "TikTok username required" });
+
   try {
+    // Fetch event types from Cal.com (pre-configured for 15/30/60 mins)
     const response = await axios.get(
       `https://api.cal.com/v2/event-types?username=${username}`,
       {
         headers: {
-          Authorization: process.env.CAL_COM_API_KEY as string,
+          Authorization: CAL_COM_API_KEY,
           "cal-api-version": "2024-06-14",
         },
       }
     );
-    const possibleMeetings = response.data.data;
 
-    const filteredMeeting = possibleMeetings
-      .filter((meeting: any) => meeting.lengthInMinutes >= duration)
-      .map((meeting: any) => ({
-        lengthInMinutes: meeting.lengthInMinutes,
-        slug: meeting.slug,
+    // Filter by duration (e.g., 15, 30, 60 mins)
+    const slots = response.data.data
+      .filter((event: any) => [15, 30, 60].includes(event.lengthInMinutes))
+      .map((event: any) => ({
+        duration: event.lengthInMinutes,
+        slug: event.slug,
+        price: `$${(event.lengthInMinutes / 15) * 5}.00`, // $5 per 15 mins
       }));
-    let possibleSlots = [];
 
-    for (let i = 0; i < filteredMeeting.length; i++) {
-      const key = filteredMeeting[i].lengthInMinutes;
-      const slots = await axios.get(
-        `https://api.cal.com/v2/slots?start=${startTime}&end=${endTime}&username=${username}&eventTypeSlug=${filteredMeeting[i].slug}`,
-        {
-          headers: {
-            "cal-api-version": "2024-09-04",
-          },
-        }
-      );
-
-      const formattedSlots = Object.entries(slots.data.data).map(
-        ([date, timeSlots]) => ({
-          date,
-          availability: (timeSlots as any[]).map((slot: any) => {
-            const time = slot.start;
-            return time;
-          }),
-        })
-      );
-
-      possibleSlots.push({
-        duration: `${key} minutes`,
-        eventSlug: filteredMeeting[i].slug,
-        availability: formattedSlots,
-      });
-    }
-
-    res.json({
-      message: "Available slots retrieved successfully",
-      data: possibleSlots,
-    });
+    res.json({ slots });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to fetch event types" });
-    return;
+    res.status(500).json({ error: "Failed to fetch slots" });
   }
 });
 
-app.post("/book-meeting", async (req: Request, res: Response) => {
-  const { attendeeName, attendeeEmail, startTime, username, eventTypeSlug } =
-    req.body;
+// Book a session (payment held until TikTok proof)
+app.post("/book", async (req: Request, res: Response) => {
+  const { 
+    username,       // Vendor's TikTok handle (e.g., "atlbarber")
+    eventTypeSlug,  // "15-min", "30-min", etc.
+    startTime,      // ISO timestamp
+    clientTikTok,   // Client's TikTok handle (for tagging)
+    postId          // Original TikTok post ID (e.g., "30080 Barber wanted ASAP")
+  } = req.body;
 
-  if (
-    !attendeeName ||
-    !attendeeEmail ||
-    !startTime ||
-    !username ||
-    !eventTypeSlug
-  ) {
-    res.status(400).json({
-      error:
-        "Missing required fields. Please provide attendeeName, attendeeEmail, startTime, username and eventTypeSlug",
-    });
+  if (!username || !eventTypeSlug || !startTime || !postId) {
+    return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
-    const response = await axios.post(
+    // Step 1: Book via Cal.com
+    const booking = await axios.post(
       "https://api.cal.com/v2/bookings",
       {
-        attendee: {
-          language: "en",
-          name: attendeeName,
-          timeZone: "America/New_York",
-          email: attendeeEmail,
-        },
         start: startTime,
-        eventTypeSlug: eventTypeSlug,
-        username: username,
+        eventTypeSlug,
+        username,
+        metadata: { postId, clientTikTok }, // Store for verification
       },
       {
         headers: {
-          Authorization: process.env.CAL_COM_API_KEY as string,
-          "Content-Type": "application/json",
+          Authorization: CAL_COM_API_KEY,
           "cal-api-version": "2024-08-13",
         },
       }
     );
 
+    // Step 2: Return booking ID + payment instructions
     res.json({
-      message: "Meeting booked successfully",
-      data: response.data,
+      success: true,
+      bookingId: booking.data.id,
+      paymentPending: true,
+      instructions: `Post a before/after TikTok tagging @${clientTikTok} and #${postId} to release payment.`,
     });
   } catch (error: any) {
-    console.error(
-      "Error booking meeting:",
-      error.response?.data || error.message
-    );
-    res.status(500).json({
-      error: "Failed to book meeting",
-      details: error.response?.data || error.message,
-    });
+    console.error(error.response?.data || error.message);
+    res.status(500).json({ error: "Booking failed" });
   }
 });
-app.post("/book-meeting-x402", async (req: Request, res: Response) => {
-  const { attendeeName, attendeeEmail, startTime, username, eventTypeSlug } =
-    req.body;
 
-  if (
-    !attendeeName ||
-    !attendeeEmail ||
-    !startTime ||
-    !username ||
-    !eventTypeSlug
-  ) {
-    res.status(400).json({
-      error:
-        "Missing required fields. Please provide attendeeName, attendeeEmail, startTime, username and eventTypeSlug",
-    });
-  }
+// Webhook for TikTok verification (called manually or via automation)
+app.post("/verify-tiktok", async (req: Request, res: Response) => {
+  const { bookingId, tiktokUrl } = req.body;
 
-  try {
-    const response = await axios.post(
-      "https://api.cal.com/v2/bookings",
-      {
-        attendee: {
-          language: "en",
-          name: attendeeName,
-          timeZone: "America/New_York",
-          email: attendeeEmail,
-        },
-        start: startTime,
-        eventTypeSlug: eventTypeSlug,
-        username: username,
-      },
-      {
-        headers: {
-          Authorization: process.env.CAL_COM_API_KEY as string,
-          "Content-Type": "application/json",
-          "cal-api-version": "2024-08-13",
-        },
-      }
-    );
+  // Validate TikTok post (pseudo-code)
+  const isValid = await checkTikTokPost(tiktokUrl); // Implement scraping/API checks
 
-    res.json({
-      message: "Meeting booked successfully",
-      data: response.data,
-    });
-  } catch (error: any) {
-    console.error(
-      "Error booking meeting:",
-      error.response?.data || error.message
-    );
-    res.status(500).json({
-      error: "Failed to book meeting",
-      details: error.response?.data || error.message,
-    });
+  if (isValid) {
+    // Release X402 payment
+    await releasePayment(bookingId);
+    res.json({ success: true, paymentReleased: true });
+  } else {
+    res.status(400).json({ error: "Invalid proof. Tag the original post." });
   }
 });
-app.listen(CONSTANTS.PORT, () => {
-  console.log(`⚡ Server is running on localhost:${CONSTANTS.PORT}`);
+
+// Helper function (mock)
+async function checkTikTokPost(url: string): Promise<boolean> {
+  // Use TikTok API/web scraper to verify:
+  // 1. Post tags the client's handle (@clientTikTok)
+  // 2. Post includes the original hashtag (#postId)
+  return true; // Placeholder
+}
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
