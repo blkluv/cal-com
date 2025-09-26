@@ -16,7 +16,7 @@
     "axios": "^1.9.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "x402-express": "^0.3.4"
+    "x402-express": "^0.6.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.18",
